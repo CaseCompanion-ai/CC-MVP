@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
-import { Upload, User, Building, GraduationCap, Mail, FileText, Briefcase } from 'lucide-react';
+import { Upload, User, Scale, GraduationCap, Mail, FileText, Award, Building } from 'lucide-react';
 
-// Typing animation component (copied from other pages)
 function TypingAnimation({ text, speed = 100 }: { text: string; speed?: number }) {
   const [displayText, setDisplayText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -30,7 +29,7 @@ function TypingAnimation({ text, speed = 100 }: { text: string; speed?: number }
   );
 }
 
-export default function ProfilePage() {
+export default function LegalProfilePage() {
   const [activeSection, setActiveSection] = useState(0);
   const [formData, setFormData] = useState({
     // Basic Info
@@ -40,21 +39,24 @@ export default function ProfilePage() {
     phone: '',
     location: '',
     
-    // College & Organizations
-    college: '',
+    // Legal Education & Bar Admissions
+    lawSchool: '',
     graduationYear: '',
-    organizations: '',
+    barAdmissions: '',
     
-    // Email Signature
-    emailSignature: '',
+    // Legal Specialties & Practice Areas
+    practiceAreas: '',
+    legalSpecialties: '',
     
-    // Companies Interested In
-    companiesInterested: '',
+    // Firm/Organization Information
+    firmName: '',
+    position: '',
+    yearsOfExperience: '',
     
-    // Roles Interested In
-    rolesInterested: '',
+    // Legal Technology & Tools
+    legalTechExperience: '',
     
-    // Resume
+    // Resume/CV
     resume: null as File | null,
   });
 
@@ -62,27 +64,32 @@ export default function ProfilePage() {
     {
       title: 'Basic Information',
       icon: User,
-      description: 'Tell us about yourself'
+      description: 'Your professional contact information'
     },
     {
-      title: 'Education & Organizations',
+      title: 'Legal Education & Bar',
       icon: GraduationCap,
-      description: 'Your academic background'
+      description: 'Law school and bar admission details'
     },
     {
-      title: 'Email Signature',
-      icon: Mail,
-      description: 'Your professional signature'
+      title: 'Practice Areas',
+      icon: Scale,
+      description: 'Your legal specialties and practice areas'
     },
     {
-      title: 'Career Interests',
+      title: 'Professional Experience',
       icon: Building,
-      description: 'Companies and roles you\'re interested in'
+      description: 'Your current firm and legal experience'
     },
     {
-      title: 'Resume',
+      title: 'Legal Technology',
+      icon: Award,
+      description: 'Technology tools and AI experience'
+    },
+    {
+      title: 'Legal Resume/CV',
       icon: FileText,
-      description: 'Upload your resume'
+      description: 'Upload your legal resume or CV'
     }
   ];
 
@@ -152,7 +159,7 @@ export default function ProfilePage() {
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Enter your email"
+                placeholder="Enter your professional email"
               />
             </div>
             <div className="grid md:grid-cols-2 gap-4">
@@ -177,7 +184,7 @@ export default function ProfilePage() {
                   value={formData.location}
                   onChange={(e) => handleInputChange('location', e.target.value)}
                   className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="City, State"
+                  placeholder="City, State (e.g., San Francisco, CA)"
                 />
               </div>
             </div>
@@ -189,14 +196,14 @@ export default function ProfilePage() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                College/University <span className="text-red-500">*</span>
+                Law School <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                value={formData.college}
-                onChange={(e) => handleInputChange('college', e.target.value)}
+                value={formData.lawSchool}
+                onChange={(e) => handleInputChange('lawSchool', e.target.value)}
                 className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Enter your college or university"
+                placeholder="Enter your law school name"
               />
             </div>
             <div>
@@ -215,14 +222,14 @@ export default function ProfilePage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Organizations & Activities <span className="text-red-500">*</span>
+                Bar Admissions <span className="text-red-500">*</span>
               </label>
               <textarea
-                value={formData.organizations}
-                onChange={(e) => handleInputChange('organizations', e.target.value)}
+                value={formData.barAdmissions}
+                onChange={(e) => handleInputChange('barAdmissions', e.target.value)}
                 rows={4}
                 className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="List any clubs, organizations, or activities you're involved in..."
+                placeholder="List all jurisdictions where you are admitted to practice (e.g., California State Bar, New York State Bar, Federal Courts, etc.)"
               />
             </div>
           </div>
@@ -233,18 +240,27 @@ export default function ProfilePage() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Email Signature <span className="text-red-500">*</span>
+                Practice Areas <span className="text-red-500">*</span>
               </label>
               <textarea
-                value={formData.emailSignature}
-                onChange={(e) => handleInputChange('emailSignature', e.target.value)}
-                rows={6}
+                value={formData.practiceAreas}
+                onChange={(e) => handleInputChange('practiceAreas', e.target.value)}
+                rows={4}
                 className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Enter your professional email signature..."
+                placeholder="List your primary practice areas (e.g., Intellectual Property, Corporate Law, Employment Law, Personal Injury, etc.)"
               />
-              <p className="text-xs text-muted-foreground mt-2">
-                This will be used when sending emails through our platform
-              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Legal Specialties & Certifications <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                value={formData.legalSpecialties}
+                onChange={(e) => handleInputChange('legalSpecialties', e.target.value)}
+                rows={4}
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                placeholder="List any legal specialties, certifications, or areas of expertise (e.g., Board Certified in Patent Law, Certified Information Privacy Professional, etc.)"
+              />
             </div>
           </div>
         );
@@ -254,27 +270,45 @@ export default function ProfilePage() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Companies You're Interested In <span className="text-red-500">*</span>
+                Current Firm/Organization <span className="text-red-500">*</span>
               </label>
-              <textarea
-                value={formData.companiesInterested}
-                onChange={(e) => handleInputChange('companiesInterested', e.target.value)}
-                rows={4}
+              <input
+                type="text"
+                value={formData.firmName}
+                onChange={(e) => handleInputChange('firmName', e.target.value)}
                 className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="List companies you'd like to work for or connect with..."
+                placeholder="Enter your law firm or organization name"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Roles You're Interested In <span className="text-red-500">*</span>
+                Position/Title <span className="text-red-500">*</span>
               </label>
-              <textarea
-                value={formData.rolesInterested}
-                onChange={(e) => handleInputChange('rolesInterested', e.target.value)}
-                rows={4}
+              <input
+                type="text"
+                value={formData.position}
+                onChange={(e) => handleInputChange('position', e.target.value)}
                 className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="List job titles or roles you're interested in..."
+                placeholder="Enter your current position (e.g., Associate, Partner, General Counsel, Solo Practitioner)"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Years of Legal Experience <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={formData.yearsOfExperience}
+                onChange={(e) => handleInputChange('yearsOfExperience', e.target.value)}
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              >
+                <option value="">Select years of experience</option>
+                <option value="0-2">0-2 years</option>
+                <option value="3-5">3-5 years</option>
+                <option value="6-10">6-10 years</option>
+                <option value="11-15">11-15 years</option>
+                <option value="16-20">16-20 years</option>
+                <option value="20+">20+ years</option>
+              </select>
             </div>
           </div>
         );
@@ -284,7 +318,28 @@ export default function ProfilePage() {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Resume <span className="text-red-500">*</span>
+                Legal Technology Experience
+              </label>
+              <textarea
+                value={formData.legalTechExperience}
+                onChange={(e) => handleInputChange('legalTechExperience', e.target.value)}
+                rows={6}
+                className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                placeholder="Describe your experience with legal technology tools, AI-powered legal research platforms, case management software, document review tools, or any other legal tech solutions you've used..."
+              />
+              <p className="text-xs text-muted-foreground mt-2">
+                This helps CC LexiAI better understand your technology comfort level and provide more relevant features
+              </p>
+            </div>
+          </div>
+        );
+
+      case 5:
+        return (
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Legal Resume/CV <span className="text-red-500">*</span>
               </label>
               <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-purple-300 transition-colors">
                 <input
@@ -297,10 +352,10 @@ export default function ProfilePage() {
                 <label htmlFor="resume-upload" className="cursor-pointer">
                   <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <p className="text-foreground font-medium mb-2">
-                    {formData.resume ? formData.resume.name : 'Upload your resume'}
+                    {formData.resume ? formData.resume.name : 'Upload your legal resume or CV'}
                   </p>
                   <p className="text-muted-foreground text-sm">
-                    PDF, DOC, or DOCX files accepted
+                    PDF, DOC, or DOCX files accepted (Max 10MB)
                   </p>
                 </label>
               </div>
@@ -310,6 +365,9 @@ export default function ProfilePage() {
                   <span>{formData.resume.name} uploaded successfully</span>
                 </div>
               )}
+              <p className="text-xs text-muted-foreground">
+                Your resume will help CC LexiAI provide more personalized case recommendations and research assistance
+              </p>
             </div>
           </div>
         );
@@ -323,9 +381,12 @@ export default function ProfilePage() {
     <DashboardLayout>
       <div className="max-w-4xl mx-auto py-8 space-y-8">
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold text-foreground">Profile</h1>
+          <h1 className="text-3xl font-bold text-foreground flex items-center space-x-3">
+            <Scale className="h-8 w-8 text-purple-600" />
+            <span>Legal Professional Profile</span>
+          </h1>
           <p className="text-muted-foreground">
-            <TypingAnimation text="Complete your professional profile..." speed={70} />
+            <TypingAnimation text="Complete your legal profile for personalized AI assistance..." speed={70} />
           </p>
         </div>
 
@@ -384,11 +445,11 @@ export default function ProfilePage() {
               disabled={activeSection === sections.length - 1}
               className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {activeSection === sections.length - 1 ? 'Save Profile' : 'Next'}
+              {activeSection === sections.length - 1 ? 'Save Legal Profile' : 'Next'}
             </button>
           </div>
         </div>
       </div>
     </DashboardLayout>
   );
-} 
+}

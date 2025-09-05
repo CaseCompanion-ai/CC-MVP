@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
 import SearchBar from '@/components/layout/search-bar';
 import NotificationsSection from '@/components/layout/notifications-section';
-import RecommendedProfiles from '@/components/layout/recommended-profiles';
-import UpcomingMeetings from '@/components/layout/upcoming-meetings';
+import CaseResearchAnalytics from '@/components/layout/case-research-analytics';
+import PrecedentFindings from '@/components/layout/precedent-findings';
 
 // Typing animation component
 function TypingAnimation({ text, speed = 100 }: { text: string; speed?: number }) {
@@ -72,22 +72,22 @@ export default function DashboardPage() {
               Welcome back, {getDisplayName()}
             </h1>
             <p>
-              <TypingAnimation text="Let's get started..." speed={30} />
+              <TypingAnimation text="Ready to strengthen your legal arguments..." speed={30} />
             </p>
           </div>
 
-          {/* Recommended Profiles */}
+          {/* Case Research Analytics */}
           <div className="animate-slide-up">
-            <RecommendedProfiles />
+            <CaseResearchAnalytics />
           </div>
 
-          {/* Notifications and Meetings */}
+          {/* Notifications and Precedent Findings */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="animate-slide-up" style={{ animationDelay: '0.1s' }}>
               <NotificationsSection />
             </div>
             <div className="animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              <UpcomingMeetings />
+              <PrecedentFindings />
             </div>
           </div>
 

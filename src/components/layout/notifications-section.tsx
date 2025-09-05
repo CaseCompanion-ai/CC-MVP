@@ -13,24 +13,24 @@ export default function NotificationsSection({ className = '' }: NotificationsSe
     {
       id: 1,
       type: 'success',
-      title: 'Profile Updated',
-      message: 'Your profile has been successfully updated.',
+      title: 'Case Analysis Complete',
+      message: 'Smith v. TechCorp analysis shows strong precedent support.',
       time: '2 minutes ago',
       read: false
     },
     {
       id: 2,
       type: 'info',
-      title: 'New Feature Available',
-      message: 'Check out our new analytics dashboard.',
+      title: 'New Precedent Found',
+      message: 'Relevant precedent discovered for Johnson Contract case.',
       time: '1 hour ago',
       read: false
     },
     {
       id: 3,
       type: 'warning',
-      title: 'Connection Warning',
-      message: 'Unusual activity detected on your network.',
+      title: 'Argument Vulnerability',
+      message: 'Potential weakness identified in Davis Employment case.',
       time: '3 hours ago',
       read: true
     }

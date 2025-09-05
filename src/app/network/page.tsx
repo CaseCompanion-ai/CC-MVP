@@ -1,157 +1,269 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
-import { Users, Filter, Search, MapPin, Building, Star, Heart } from 'lucide-react';
+import { Scale, Filter, Search, Calendar, Briefcase, TrendingUp, AlertTriangle, CheckCircle, Plus, Eye, FileText } from 'lucide-react';
 
-interface Profile {
+interface LegalCase {
   id: string;
-  name: string;
-  role: string;
-  company: string;
-  location: string;
-  matchScore: number;
-  mutualConnections: number;
-  skills: string[];
-  bio: string;
-  avatar?: string;
+  caseName: string;
+  caseType: string;
+  client: string;
+  court: string;
+  filingDate: string;
+  status: 'active' | 'pending' | 'closed' | 'on-hold';
+  priority: 'high' | 'medium' | 'low';
+  strengthScore: number;
+  precedentsFound: number;
+  vulnerabilities: number;
+  nextDeadline: string;
+  description: string;
+  legalAreas: string[];
 }
 
-export default function NetworkPage() {
+function TypingAnimation({ text, speed = 100 }: { text: string; speed?: number }) {
+  const [displayText, setDisplayText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTypingComplete, setIsTypingComplete] = useState(false);
+
+  React.useEffect(() => {
+    if (currentIndex < text.length) {
+      const timer = setTimeout(() => {
+        setDisplayText(text.slice(0, currentIndex + 1));
+        setCurrentIndex(currentIndex + 1);
+      }, speed);
+
+      return () => clearTimeout(timer);
+    } else {
+      setIsTypingComplete(true);
+    }
+  }, [currentIndex, text, speed]);
+
+  return (
+    <span className={`text-purple-400 transition-opacity duration-1000 ${isTypingComplete ? 'opacity-100' : 'opacity-70'}`}>
+      {displayText}
+    </span>
+  );
+}
+
+export default function CaseManagementPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('match');
+  const [sortBy, setSortBy] = useState('deadline');
+  const [selectedCase, setSelectedCase] = useState<LegalCase | null>(null);
 
-  const profiles: Profile[] = [
+  const cases: LegalCase[] = [
     {
       id: '1',
-      name: 'Sarah Chen',
-      role: 'Senior Product Manager',
-      company: 'TechCorp',
-      location: 'San Francisco, CA',
-      matchScore: 95,
-      mutualConnections: 12,
-      skills: ['Product Strategy', 'User Research', 'Agile'],
-      bio: 'Experienced PM with 8+ years in fintech and e-commerce. Passionate about user-centered design and data-driven decisions.'
+      caseName: 'Smith v. TechCorp Patent Dispute',
+      caseType: 'Intellectual Property',
+      client: 'Smith Industries',
+      court: '9th Circuit Court of Appeals',
+      filingDate: '2024-01-15',
+      status: 'active',
+      priority: 'high',
+      strengthScore: 8.5,
+      precedentsFound: 12,
+      vulnerabilities: 2,
+      nextDeadline: '2024-03-01',
+      description: 'Patent infringement case involving software algorithms and technical implementation details.',
+      legalAreas: ['Patent Law', 'Technology', 'Federal Court']
     },
     {
       id: '2',
-      name: 'Michael Rodriguez',
-      role: 'Engineering Manager',
-      company: 'InnovateLab',
-      location: 'Austin, TX',
-      matchScore: 88,
-      mutualConnections: 8,
-      skills: ['Team Leadership', 'Python', 'AWS', 'Microservices'],
-      bio: 'Engineering leader focused on building scalable systems and mentoring junior developers. Previously at Google and Microsoft.'
+      caseName: 'Johnson Contract Breach',
+      caseType: 'Contract Law',
+      client: 'Johnson Enterprises',
+      court: 'Superior Court of California',
+      filingDate: '2024-02-01',
+      status: 'pending',
+      priority: 'medium',
+      strengthScore: 6.2,
+      precedentsFound: 8,
+      vulnerabilities: 4,
+      nextDeadline: '2024-02-28',
+      description: 'Breach of contract dispute involving force majeure clauses and service delivery obligations.',
+      legalAreas: ['Contract Law', 'Commercial Litigation', 'State Court']
     },
     {
       id: '3',
-      name: 'Emily Watson',
-      role: 'UX Designer',
-      company: 'DesignStudio',
-      location: 'New York, NY',
-      matchScore: 92,
-      mutualConnections: 15,
-      skills: ['Figma', 'User Testing', 'Design Systems', 'Prototyping'],
-      bio: 'Creative designer with expertise in mobile apps and web platforms. Led design for 3 successful startup exits.'
+      caseName: 'Davis Employment Discrimination',
+      caseType: 'Employment Law',
+      client: 'Maria Davis',
+      court: 'Federal District Court, N.D. Cal.',
+      filingDate: '2024-01-20',
+      status: 'active',
+      priority: 'high',
+      strengthScore: 4.1,
+      precedentsFound: 5,
+      vulnerabilities: 7,
+      nextDeadline: '2024-02-25',
+      description: 'Employment discrimination case involving workplace harassment and wrongful termination claims.',
+      legalAreas: ['Employment Law', 'Civil Rights', 'Federal Court']
     },
     {
       id: '4',
-      name: 'David Kim',
-      role: 'Data Scientist',
-      company: 'AnalyticsPro',
-      location: 'Seattle, WA',
-      matchScore: 85,
-      mutualConnections: 6,
-      skills: ['Machine Learning', 'Python', 'SQL', 'TensorFlow'],
-      bio: 'ML specialist with PhD in Computer Science. Built recommendation systems used by millions of users.'
+      caseName: 'Martinez Personal Injury',
+      caseType: 'Personal Injury',
+      client: 'Roberto Martinez',
+      court: 'Los Angeles County Superior Court',
+      filingDate: '2024-01-10',
+      status: 'active',
+      priority: 'medium',
+      strengthScore: 7.8,
+      precedentsFound: 15,
+      vulnerabilities: 3,
+      nextDeadline: '2024-03-15',
+      description: 'Personal injury case involving vehicle accident and medical malpractice claims.',
+      legalAreas: ['Personal Injury', 'Medical Malpractice', 'State Court']
     },
     {
       id: '5',
-      name: 'Lisa Thompson',
-      role: 'Marketing Director',
-      company: 'GrowthCo',
-      location: 'Los Angeles, CA',
-      matchScore: 90,
-      mutualConnections: 10,
-      skills: ['Digital Marketing', 'Brand Strategy', 'Growth Hacking'],
-      bio: 'Marketing leader with track record of 10x growth for SaaS companies. Expert in B2B marketing and customer acquisition.'
+      caseName: 'GlobalTech M&A Due Diligence',
+      caseType: 'Corporate Law',
+      client: 'GlobalTech Corporation',
+      court: 'Delaware Chancery Court',
+      filingDate: '2024-02-05',
+      status: 'on-hold',
+      priority: 'low',
+      strengthScore: 9.1,
+      precedentsFound: 20,
+      vulnerabilities: 1,
+      nextDeadline: '2024-04-01',
+      description: 'Merger and acquisition transaction with regulatory compliance and due diligence requirements.',
+      legalAreas: ['Corporate Law', 'M&A', 'Securities Law']
     },
     {
       id: '6',
-      name: 'James Wilson',
-      role: 'Frontend Developer',
-      company: 'WebTech',
-      location: 'Chicago, IL',
-      matchScore: 87,
-      mutualConnections: 9,
-      skills: ['React', 'TypeScript', 'Next.js', 'Tailwind CSS'],
-      bio: 'Full-stack developer specializing in modern web technologies. Built 50+ production applications.'
+      caseName: 'Environmental Compliance Violation',
+      caseType: 'Environmental Law',
+      client: 'EcoManufacturing Inc.',
+      court: 'EPA Administrative Court',
+      filingDate: '2024-01-25',
+      status: 'closed',
+      priority: 'medium',
+      strengthScore: 5.9,
+      precedentsFound: 10,
+      vulnerabilities: 5,
+      nextDeadline: '2024-02-20',
+      description: 'Environmental regulation compliance case involving water discharge permits and EPA violations.',
+      legalAreas: ['Environmental Law', 'Regulatory Compliance', 'Administrative Law']
     }
   ];
 
   const filters = [
-    { id: 'all', label: 'All Profiles' },
-    { id: 'high-match', label: 'High Match (90%+)' },
-    { id: 'mutual-connections', label: 'High Mutual Connections' },
-    { id: 'same-industry', label: 'Same Industry' },
-    { id: 'same-location', label: 'Same Location' }
+    { id: 'all', label: 'All Cases' },
+    { id: 'active', label: 'Active' },
+    { id: 'pending', label: 'Pending' },
+    { id: 'high-priority', label: 'High Priority' },
+    { id: 'weak-cases', label: 'Needs Attention' }
   ];
 
   const sortOptions = [
-    { id: 'match', label: 'Match Score' },
-    { id: 'connections', label: 'Mutual Connections' },
-    { id: 'name', label: 'Name' },
-    { id: 'company', label: 'Company' }
+    { id: 'deadline', label: 'Next Deadline' },
+    { id: 'strength', label: 'Strength Score' },
+    { id: 'priority', label: 'Priority' },
+    { id: 'filing-date', label: 'Filing Date' },
+    { id: 'case-name', label: 'Case Name' }
   ];
 
-  const filteredProfiles = profiles
-    .filter(profile => {
-      const matchesSearch = profile.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          profile.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          profile.company.toLowerCase().includes(searchTerm.toLowerCase());
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
+      case 'on-hold':
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+      case 'closed':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'high':
+        return 'text-red-600 dark:text-red-400';
+      case 'medium':
+        return 'text-yellow-600 dark:text-yellow-400';
+      case 'low':
+        return 'text-green-600 dark:text-green-400';
+      default:
+        return 'text-gray-600 dark:text-gray-400';
+    }
+  };
+
+  const getStrengthColor = (score: number) => {
+    if (score >= 7.5) return 'text-green-600 dark:text-green-400';
+    if (score >= 5.0) return 'text-yellow-600 dark:text-yellow-400';
+    return 'text-red-600 dark:text-red-400';
+  };
+
+  const filteredCases = cases
+    .filter(caseItem => {
+      const matchesSearch = caseItem.caseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          caseItem.caseType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          caseItem.client.toLowerCase().includes(searchTerm.toLowerCase());
       
       if (!matchesSearch) return false;
       
       switch (selectedFilter) {
-        case 'high-match':
-          return profile.matchScore >= 90;
-        case 'mutual-connections':
-          return profile.mutualConnections >= 10;
-        case 'same-industry':
-          return profile.company.includes('Tech') || profile.company.includes('Lab');
-        case 'same-location':
-          return profile.location.includes('San Francisco') || profile.location.includes('CA');
+        case 'active':
+          return caseItem.status === 'active';
+        case 'pending':
+          return caseItem.status === 'pending';
+        case 'high-priority':
+          return caseItem.priority === 'high';
+        case 'weak-cases':
+          return caseItem.strengthScore < 5.0;
         default:
           return true;
       }
     })
     .sort((a, b) => {
       switch (sortBy) {
-        case 'match':
-          return b.matchScore - a.matchScore;
-        case 'connections':
-          return b.mutualConnections - a.mutualConnections;
-        case 'name':
-          return a.name.localeCompare(b.name);
-        case 'company':
-          return a.company.localeCompare(b.company);
+        case 'deadline':
+          return new Date(a.nextDeadline).getTime() - new Date(b.nextDeadline).getTime();
+        case 'strength':
+          return b.strengthScore - a.strengthScore;
+        case 'priority':
+          const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+          return priorityOrder[b.priority] - priorityOrder[a.priority];
+        case 'filing-date':
+          return new Date(b.filingDate).getTime() - new Date(a.filingDate).getTime();
+        case 'case-name':
+          return a.caseName.localeCompare(b.caseName);
         default:
           return 0;
       }
     });
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
         {/* Header */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Users className="h-6 w-6 text-purple-600" />
-            <h1 className="text-2xl font-medium text-foreground">Recommended Profiles</h1>
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Scale className="h-6 w-6 text-purple-600" />
+              <h1 className="text-2xl font-medium text-foreground">Case Management</h1>
+            </div>
+            <p><TypingAnimation text="Manage your legal cases and track progress..." speed={70} /></p>
           </div>
-          <p className="text-muted-foreground">Connect with the best, personalized for you...</p>
+          <button className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+            <Plus className="h-4 w-4" />
+            <span>New Case</span>
+          </button>
         </div>
 
         {/* Search and Filters */}
@@ -161,7 +273,7 @@ export default function NetworkPage() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Search by name, role, or company..."
+              placeholder="Search cases by name, type, or client..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
@@ -209,64 +321,90 @@ export default function NetworkPage() {
 
         {/* Results Count */}
         <div className="text-sm text-muted-foreground">
-          Showing {filteredProfiles.length} of {profiles.length} profiles
+          Showing {filteredCases.length} of {cases.length} cases
         </div>
 
-        {/* Profiles Grid */}
+        {/* Cases Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProfiles.map((profile) => (
+          {filteredCases.map((caseItem) => (
             <div
-              key={profile.id}
+              key={caseItem.id}
               className="p-6 rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg hover:border-purple-300 transition-all duration-200"
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-semibold text-foreground truncate">{profile.name}</h3>
-                  <p className="text-sm text-muted-foreground truncate">{profile.role}</p>
+                  <h3 className="text-lg font-semibold text-foreground truncate">{caseItem.caseName}</h3>
+                  <p className="text-sm text-muted-foreground truncate">{caseItem.caseType}</p>
                   <div className="flex items-center gap-1 mt-1">
-                    <Building className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground">{profile.company}</span>
+                    <Briefcase className="h-3 w-3 text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground">{caseItem.client}</span>
                   </div>
                   <div className="flex items-center gap-1 mt-1">
-                    <MapPin className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground">{profile.location}</span>
+                    <Calendar className="h-3 w-3 text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground">Due: {formatDate(caseItem.nextDeadline)}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 ml-2">
-                  <Heart className="h-3 w-3 text-red-500" />
-                  <span className="text-xs font-medium text-foreground">{profile.matchScore}%</span>
+                <div className="flex flex-col items-end space-y-1">
+                  <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(caseItem.status)}`}>
+                    {caseItem.status}
+                  </span>
+                  <span className={`text-xs font-medium ${getPriorityColor(caseItem.priority)}`}>
+                    {caseItem.priority} priority
+                  </span>
                 </div>
               </div>
 
-              {/* Bio */}
-              <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{profile.bio}</p>
+              {/* Metrics */}
+              <div className="grid grid-cols-3 gap-3 mb-4 text-center">
+                <div>
+                  <div className={`text-sm font-semibold ${getStrengthColor(caseItem.strengthScore)}`}>
+                    {caseItem.strengthScore}/10
+                  </div>
+                  <div className="text-xs text-muted-foreground">Strength</div>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-foreground">
+                    {caseItem.precedentsFound}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Precedents</div>
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-foreground">
+                    {caseItem.vulnerabilities}
+                  </div>
+                  <div className="text-xs text-muted-foreground">Issues</div>
+                </div>
+              </div>
 
-              {/* Skills */}
+              {/* Description */}
+              <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{caseItem.description}</p>
+
+              {/* Legal Areas */}
               <div className="flex flex-wrap gap-1 mb-4">
-                {profile.skills.slice(0, 3).map((skill, index) => (
+                {caseItem.legalAreas.slice(0, 2).map((area, index) => (
                   <span
                     key={index}
                     className="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-full"
                   >
-                    {skill}
+                    {area}
                   </span>
                 ))}
-                {profile.skills.length > 3 && (
+                {caseItem.legalAreas.length > 2 && (
                   <span className="px-2 py-1 text-xs text-muted-foreground">
-                    +{profile.skills.length - 3} more
+                    +{caseItem.legalAreas.length - 2} more
                   </span>
                 )}
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-between pt-4 border-t border-border/30">
-                <div className="flex items-center gap-2">
-                  <Users className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">{profile.mutualConnections} mutual connections</span>
-                </div>
-                <button className="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                  Connect
+              <div className="flex space-x-2 pt-4 border-t border-border/30">
+                <button className="flex-1 px-3 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center space-x-1">
+                  <Eye className="h-3 w-3" />
+                  <span>View Case</span>
+                </button>
+                <button className="px-3 py-2 text-sm border border-border text-muted-foreground rounded-lg hover:bg-muted/50 transition-colors flex items-center justify-center">
+                  <FileText className="h-3 w-3" />
                 </button>
               </div>
             </div>
@@ -274,14 +412,14 @@ export default function NetworkPage() {
         </div>
 
         {/* Empty State */}
-        {filteredProfiles.length === 0 && (
+        {filteredCases.length === 0 && (
           <div className="text-center py-12">
-            <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2">No profiles found</h3>
-            <p className="text-muted-foreground">Try adjusting your search or filters to find more matches.</p>
+            <Scale className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">No cases found</h3>
+            <p className="text-muted-foreground">Try adjusting your search or filters to find more cases.</p>
           </div>
         )}
       </div>
     </DashboardLayout>
   );
-} 
+}

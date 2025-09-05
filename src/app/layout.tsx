@@ -14,10 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Netch App - Secure Network Management",
-  description: "Advanced network monitoring and management platform with enterprise-grade security. Monitor, analyze, and optimize your network infrastructure with real-time insights.",
-  keywords: ["network management", "network monitoring", "enterprise security", "network analytics", "app"],
-  authors: [{ name: "Netch Team" }],
+  title: "CC LexiAI - AI Legal Case Researcher & Voice Advocate",
+  description: "AI-powered legal case researcher and argumentation assistant with real-time voice-enabled advocacy engine for legal professionals.",
+  keywords: ["legal AI", "case research", "legal precedents", "voice advocacy", "legal technology", "law"],
+  authors: [{ name: "CC LexiAI Team" }],
   robots: "noindex, nofollow", // Since this is an app subdomain
 };
 

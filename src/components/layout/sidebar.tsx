@@ -10,7 +10,8 @@ import {
   User,
   ListChecks,
   CheckCircle,
-  Calendar
+  Calendar,
+  Scale
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -23,40 +24,28 @@ export default function Sidebar({ className = '' }: SidebarProps) {
 
   const navigation = [
     {
-      name: 'Home',
+      name: 'Dashboard',
       href: '/dashboard',
       icon: LayoutDashboard,
-      description: 'Overview and metrics'
+      description: 'Case overview & analytics'
     },
     {
-      name: 'Recommended',
+      name: 'Cases',
+      href: '/network',
+      icon: ListChecks,
+      description: 'Manage legal cases'
+    },
+    {
+      name: 'Precedents',
       href: '/recommended',
       icon: BarChart3,
-      description: 'Personalized suggestions'
-    },
-    {
-      name: 'In-Progress',
-      href: '/in-progress',
-      icon: ListChecks,
-      description: 'Connections in progress'
-    },
-    {
-      name: 'Completed',
-      href: '/completed',
-      icon: CheckCircle,
-      description: 'Completed connections'
-    },
-    {
-      name: 'Calendar',
-      href: '/calendar',
-      icon: Calendar,
-      description: 'Upcoming meetings'
+      description: 'Research precedents'
     },
     {
       name: 'Profile',
       href: '/profile',
       icon: User,
-      description: 'Your profile'
+      description: 'Legal profile'
     }
   ];
 

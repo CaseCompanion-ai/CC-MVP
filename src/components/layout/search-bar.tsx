@@ -13,10 +13,11 @@ export default function SearchBar({
   className = ""
 }: SearchBarProps) {
   const searchTexts = [
-    "Search for your in-progress connections...",
-    "Search for your upcoming meetings...",
-    "Search for your recommended profiles...",
-    "Search your notifications..."
+    "Search case law and precedents...",
+    "Find similar legal arguments...",
+    "Research opposing counsel strategies...",
+    "Analyze judge ruling patterns...",
+    "Search legal statutes and regulations..."
   ];
   
   const [displayPlaceholder, setDisplayPlaceholder] = useState('');

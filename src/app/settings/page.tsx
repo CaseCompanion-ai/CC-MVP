@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
-import TypingAnimation from '@/components/typing-animation';
 import { 
   User, 
   CreditCard, 
@@ -34,7 +33,7 @@ export default function SettingsPage() {
         <div className="space-y-2">
           <h1 className="text-3xl font-bold text-foreground">Settings</h1>
           <p className="text-muted-foreground">
-            <TypingAnimation text="Manage your account and preferences..." speed={30} />
+            Manage your CC LexiAI preferences and settings...
           </p>
         </div>
 
@@ -145,27 +144,27 @@ export default function SettingsPage() {
 
               {activeTab === 'billing' && (
                 <div className="space-y-5">
-                  <h2 className="text-xl font-semibold text-foreground">Billing & Subscription</h2>
+                  <h2 className="text-xl font-semibold text-foreground">CC LexiAI Subscription</h2>
                   
                   <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <h3 className="text-lg font-semibold text-foreground">Pro Plan</h3>
-                        <p className="text-muted-foreground">$29/month</p>
+                        <h3 className="text-lg font-semibold text-foreground">LexiAI Professional</h3>
+                        <p className="text-muted-foreground">$299/month</p>
                       </div>
                       <span className="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300 rounded-full text-sm font-medium">
                         Active
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Next billing date: March 15, 2024
+                      Next billing date: March 15, 2024 • Unlimited case research & voice advocacy
                     </p>
                     <div className="flex space-x-3">
                       <button className="px-3 py-1.5 text-sm bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">
-                        Manage
+                        Manage Plan
                       </button>
                       <button className="px-3 py-1.5 text-sm border border-border text-foreground rounded-md hover:bg-muted/50 transition-colors">
-                        Download
+                        Download Invoice
                       </button>
                     </div>
                   </div>
@@ -197,8 +196,8 @@ export default function SettingsPage() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 border border-border rounded-lg">
                       <div>
-                        <h3 className="font-medium text-foreground text-sm">Email Notifications</h3>
-                        <p className="text-xs text-muted-foreground">Receive updates about new connections and opportunities</p>
+                        <h3 className="font-medium text-foreground text-sm">Case Updates</h3>
+                        <p className="text-xs text-muted-foreground">Receive notifications about case analysis updates and new precedents</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" className="sr-only peer" defaultChecked />
@@ -208,8 +207,8 @@ export default function SettingsPage() {
 
                     <div className="flex items-center justify-between p-3 border border-border rounded-lg">
                       <div>
-                        <h3 className="font-medium text-foreground text-sm">Push Notifications</h3>
-                        <p className="text-xs text-muted-foreground">Get instant alerts for new messages and matches</p>
+                        <h3 className="font-medium text-foreground text-sm">Precedent Alerts</h3>
+                        <p className="text-xs text-muted-foreground">Get instant alerts for new relevant precedents and case law updates</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" className="sr-only peer" />
@@ -219,8 +218,8 @@ export default function SettingsPage() {
 
                     <div className="flex items-center justify-between p-3 border border-border rounded-lg">
                       <div>
-                        <h3 className="font-medium text-foreground text-sm">Weekly Digest</h3>
-                        <p className="text-xs text-muted-foreground">Receive a summary of your networking activity</p>
+                        <h3 className="font-medium text-foreground text-sm">Legal Research Digest</h3>
+                        <p className="text-xs text-muted-foreground">Receive a weekly summary of your legal research and case activity</p>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" className="sr-only peer" defaultChecked />

@@ -1,29 +1,31 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from '@/components/layout/dashboard-layout';
-import { Users, Filter, Search, MapPin, Building, Star, Heart } from 'lucide-react';
-import { useRef } from 'react';
+import { BookOpen, Filter, Search, Calendar, Scale, Star, TrendingUp, ExternalLink, Eye, Plus, Award } from 'lucide-react';
 
-interface Profile {
+interface Precedent {
   id: string;
-  name: string;
-  role: string;
-  company: string;
-  location: string;
-  matchScore: number;
-  skills: string[];
-  bio: string;
-  avatar?: string;
+  caseName: string;
+  court: string;
+  year: number;
+  relevanceScore: number;
+  caseType: string;
+  outcome: 'favorable' | 'unfavorable' | 'neutral';
+  citation: string;
+  summary: string;
+  keyPoints: string[];
+  applicableToCase: string;
+  dateFound: string;
+  jurisdiction: string;
 }
 
-// Typing animation component (copied from dashboard)
 function TypingAnimation({ text, speed = 100 }: { text: string; speed?: number }) {
-  const [displayText, setDisplayText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
+  const [displayText, setDisplayText] = React.useState('');
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [isTypingComplete, setIsTypingComplete] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (currentIndex < text.length) {
       const timer = setTimeout(() => {
         setDisplayText(text.slice(0, currentIndex + 1));
@@ -43,248 +45,218 @@ function TypingAnimation({ text, speed = 100 }: { text: string; speed?: number }
   );
 }
 
-// Typing/cycling animation for search bar placeholder
-function CyclingPlaceholder({ options, speed = 60, pause = 1200 }: { options: string[]; speed?: number; pause?: number }) {
-  const [displayText, setDisplayText] = useState(options[0]);
-  const [currentOption, setCurrentOption] = useState(0);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTyping, setIsTyping] = useState(true);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    if (isTyping) {
-      if (currentIndex < options[currentOption].length) {
-        timeoutRef.current = setTimeout(() => {
-          setDisplayText(options[currentOption].slice(0, currentIndex + 1));
-          setCurrentIndex(currentIndex + 1);
-        }, speed);
-      } else {
-        setIsTyping(false);
-        timeoutRef.current = setTimeout(() => {
-          setIsTyping(false);
-        }, pause);
-      }
-    } else {
-      timeoutRef.current = setTimeout(() => {
-        setCurrentOption((currentOption + 1) % options.length);
-        setCurrentIndex(0);
-        setIsTyping(true);
-      }, pause);
-    }
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, [isTyping, currentIndex, currentOption, options, speed, pause]);
-
-  return displayText;
-}
-
-export default function NetworkPage() {
+export default function PrecedentResearchPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('match');
-  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
-  const [showScorePopover, setShowScorePopover] = useState(false);
-  const heartRef = useRef<HTMLDivElement>(null);
-  const [showMoveConfirm, setShowMoveConfirm] = useState(false);
-  const [moveChecked, setMoveChecked] = useState(false);
+  const [sortBy, setSortBy] = useState('relevance');
+  const [selectedPrecedent, setSelectedPrecedent] = useState<Precedent | null>(null);
 
-  // Close popover when clicking outside
-  useEffect(() => {
-    if (!showScorePopover) return;
-    function handleClick(e: MouseEvent) {
-      if (heartRef.current && !heartRef.current.contains(e.target as Node)) {
-        setShowScorePopover(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [showScorePopover]);
-
-  const profiles: Profile[] = [
+  const precedents: Precedent[] = [
     {
       id: '1',
-      name: 'Sarah Chen',
-      role: 'Senior Product Manager',
-      company: 'TechCorp',
-      location: 'San Francisco, CA',
-      matchScore: 95,
-      skills: ['Product Strategy', 'User Research', 'Agile'],
-      bio: 'Experienced PM with 8+ years in fintech and e-commerce. Passionate about user-centered design and data-driven decisions.'
+      caseName: 'Anderson v. Digital Systems Inc.',
+      court: '9th Circuit Court of Appeals',
+      year: 2023,
+      relevanceScore: 9.2,
+      caseType: 'Patent Infringement',
+      outcome: 'favorable',
+      citation: '2023 U.S. App. LEXIS 12345 (9th Cir.)',
+      summary: 'Court ruled that software patents require specific technical implementation details to be valid and enforceable.',
+      keyPoints: [
+        'Software patents must include specific technical implementation',
+        'Abstract ideas cannot be patented without technical specificity',
+        'Prior art analysis must consider functional equivalents'
+      ],
+      applicableToCase: 'Smith v. TechCorp Patent Dispute',
+      dateFound: '2 hours ago',
+      jurisdiction: 'Federal Circuit'
     },
     {
       id: '2',
-      name: 'Michael Rodriguez',
-      role: 'Engineering Manager',
-      company: 'InnovateLab',
-      location: 'Austin, TX',
-      matchScore: 88,
-      skills: ['Team Leadership', 'Python', 'AWS', 'Microservices'],
-      bio: 'Engineering leader focused on building scalable systems and mentoring junior developers. Previously at Google and Microsoft.'
+      caseName: 'Wilson Contract Holdings v. State of California',
+      court: 'Supreme Court of California',
+      year: 2022,
+      relevanceScore: 8.7,
+      caseType: 'Contract Dispute',
+      outcome: 'favorable',
+      citation: '15 Cal. 5th 234 (2022)',
+      summary: 'Established precedent for contract interpretation in force majeure situations during pandemic-related disruptions.',
+      keyPoints: [
+        'Force majeure clauses apply to unforeseeable circumstances',
+        'Contract performance impossibility requires objective evidence',
+        'Good faith efforts to mitigate must be demonstrated'
+      ],
+      applicableToCase: 'Johnson Contract Breach',
+      dateFound: '5 hours ago',
+      jurisdiction: 'California State'
     },
     {
       id: '3',
-      name: 'Emily Watson',
-      role: 'UX Designer',
-      company: 'DesignStudio',
-      location: 'New York, NY',
-      matchScore: 92,
-      skills: ['Figma', 'User Testing', 'Design Systems', 'Prototyping'],
-      bio: 'Creative designer with expertise in mobile apps and web platforms. Led design for 3 successful startup exits.'
+      caseName: 'Employment Rights Coalition v. TechGroup LLC',
+      court: 'Federal District Court, N.D. Cal.',
+      year: 2021,
+      relevanceScore: 7.1,
+      caseType: 'Employment Discrimination',
+      outcome: 'unfavorable',
+      citation: '2021 U.S. Dist. LEXIS 45678 (N.D. Cal.)',
+      summary: 'Court narrowly interpreted discrimination claims in tech sector cases, requiring higher burden of proof.',
+      keyPoints: [
+        'Discrimination claims require direct evidence or strong circumstantial evidence',
+        'Company diversity programs do not preclude discrimination claims',
+        'Statistical evidence alone insufficient without individual harm proof'
+      ],
+      applicableToCase: 'Davis Employment Discrimination',
+      dateFound: '1 day ago',
+      jurisdiction: 'Federal District'
     },
     {
       id: '4',
-      name: 'David Kim',
-      role: 'Data Scientist',
-      company: 'AnalyticsPro',
-      location: 'Seattle, WA',
-      matchScore: 85,
-      skills: ['Machine Learning', 'Python', 'SQL', 'TensorFlow'],
-      bio: 'ML specialist with PhD in Computer Science. Built recommendation systems used by millions of users.'
+      caseName: 'Martinez v. Regional Medical Center',
+      court: 'California Court of Appeal',
+      year: 2023,
+      relevanceScore: 8.4,
+      caseType: 'Medical Malpractice',
+      outcome: 'favorable',
+      citation: '2023 Cal. App. LEXIS 78901 (2d Dist.)',
+      summary: 'Court expanded liability for hospitals in cases involving emergency room treatment protocols.',
+      keyPoints: [
+        'Hospital liability extends to independent contractor physicians',
+        'Emergency room standard of care includes adequate staffing',
+        'Documentation requirements for informed consent in emergency situations'
+      ],
+      applicableToCase: 'Martinez Personal Injury',
+      dateFound: '3 hours ago',
+      jurisdiction: 'California State'
     },
     {
       id: '5',
-      name: 'Lisa Thompson',
-      role: 'Marketing Director',
-      company: 'GrowthCo',
-      location: 'Los Angeles, CA',
-      matchScore: 90,
-      skills: ['Digital Marketing', 'Brand Strategy', 'Growth Hacking'],
-      bio: 'Marketing leader with track record of 10x growth for SaaS companies. Expert in B2B marketing and customer acquisition.'
+      caseName: 'Corporate Merger Solutions v. Federal Trade Commission',
+      court: 'D.C. Circuit Court of Appeals',
+      year: 2022,
+      relevanceScore: 9.5,
+      caseType: 'Corporate Merger',
+      outcome: 'favorable',
+      citation: '2022 U.S. App. LEXIS 23456 (D.C. Cir.)',
+      summary: 'Court clarified antitrust analysis standards for technology sector mergers and market concentration.',
+      keyPoints: [
+        'Market definition must consider potential competition',
+        'Vertical integration benefits can offset concentration concerns',
+        'Innovation competition analysis required for tech mergers'
+      ],
+      applicableToCase: 'GlobalTech M&A Due Diligence',
+      dateFound: '6 hours ago',
+      jurisdiction: 'Federal Circuit'
     },
     {
       id: '6',
-      name: 'James Wilson',
-      role: 'Frontend Developer',
-      company: 'WebTech',
-      location: 'Chicago, IL',
-      matchScore: 87,
-      skills: ['React', 'TypeScript', 'Next.js', 'Tailwind CSS'],
-      bio: 'Full-stack developer specializing in modern web technologies. Built 50+ production applications.'
+      caseName: 'Environmental Defense Fund v. Coastal Manufacturing',
+      court: 'EPA Administrative Law Judge',
+      year: 2023,
+      relevanceScore: 6.8,
+      caseType: 'Environmental Compliance',
+      outcome: 'neutral',
+      citation: 'EPA ALJ Decision 2023-14',
+      summary: 'Administrative decision provided framework for water discharge permit violations and penalty calculations.',
+      keyPoints: [
+        'Penalty calculations must consider economic benefit of noncompliance',
+        'Voluntary disclosure and remediation efforts reduce penalties',
+        'Repeat violations subject to enhanced penalty guidelines'
+      ],
+      applicableToCase: 'Environmental Compliance Violation',
+      dateFound: '4 hours ago',
+      jurisdiction: 'Federal Administrative'
     }
   ];
-
-  // Add headshot, LinkedIn, and email to profiles for demo
-  const demoHeadshots = [
-    '/profile1.png', '/profile2.png', '/profile3.png', '/profile4.png', '/profile5.png', '/profile6.png'
-  ];
-  const demoLinkedIns = [
-    'https://linkedin.com/in/sarahchen',
-    'https://linkedin.com/in/michaelrodriguez',
-    'https://linkedin.com/in/emilywatson',
-    'https://linkedin.com/in/davidkim',
-    'https://linkedin.com/in/lisathompson',
-    'https://linkedin.com/in/jameswilson'
-  ];
-  const demoEmails = [
-    'sarah.chen@email.com',
-    'michael.rodriguez@email.com',
-    'emily.watson@email.com',
-    'david.kim@email.com',
-    'lisa.thompson@email.com',
-    'james.wilson@email.com'
-  ];
-  profiles.forEach((p, i) => {
-    p.avatar = demoHeadshots[i % demoHeadshots.length];
-    (p as any).linkedin = demoLinkedIns[i % demoLinkedIns.length];
-    (p as any).email = demoEmails[i % demoEmails.length];
-  });
-
-  // Email modal state
-  const [showEmailModal, setShowEmailModal] = useState(false);
-  const [emailDraft, setEmailDraft] = useState('');
-  const [typing, setTyping] = useState(false);
-
-  // Typing animation for email
-  const sampleEmail = `Hi {name},\n\nI came across your profile on Netch.ai and was impressed by your background in {role} at {company}. I would love to connect and learn more about your experience.\n\nBest,\n[Your Name]`;
-  const startEmailTyping = useCallback(() => {
-    setShowEmailModal(true);
-    setEmailDraft('');
-    setTyping(true);
-    let i = 0;
-    const text = sampleEmail
-      .replace('{name}', selectedProfile?.name || '')
-      .replace('{role}', selectedProfile?.role || '')
-      .replace('{company}', selectedProfile?.company || '');
-    function type() {
-      if (i <= text.length) {
-        setEmailDraft(text.slice(0, i));
-        i++;
-        setTimeout(type, 18);
-      } else {
-        setTyping(false);
-      }
-    }
-    setTimeout(type, 400);
-  }, [selectedProfile]);
-
-  const closeEmailModal = () => {
-    setShowEmailModal(false);
-    setTyping(false);
-    setEmailDraft('');
-  };
 
   const filters = [
-    { id: 'all', label: 'All Profiles' },
-    { id: 'high-match', label: 'High Match (90%+)' },
-    { id: 'same-industry', label: 'Same Industry' },
-    { id: 'same-location', label: 'Same Location' }
+    { id: 'all', label: 'All Precedents' },
+    { id: 'favorable', label: 'Favorable Outcomes' },
+    { id: 'recent', label: 'Recent (2022+)' },
+    { id: 'high-relevance', label: 'High Relevance (8+)' },
+    { id: 'federal', label: 'Federal Courts' }
   ];
 
   const sortOptions = [
-    { id: 'match', label: 'Netch Score' },
-    { id: 'company', label: 'Company' },
-    { id: 'role', label: 'Role' },
-    { id: 'location', label: 'Location' }
+    { id: 'relevance', label: 'Relevance Score' },
+    { id: 'year', label: 'Year' },
+    { id: 'court', label: 'Court' },
+    { id: 'outcome', label: 'Outcome' },
+    { id: 'case-name', label: 'Case Name' }
   ];
 
-  const filteredProfiles = profiles
-    .filter(profile => {
-      const matchesSearch = profile.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          profile.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          profile.company.toLowerCase().includes(searchTerm.toLowerCase());
+  const getOutcomeColor = (outcome: string) => {
+    switch (outcome) {
+      case 'favorable':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
+      case 'unfavorable':
+        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
+      case 'neutral':
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
+    }
+  };
+
+  const getRelevanceColor = (score: number) => {
+    if (score >= 8.5) return 'text-green-600 dark:text-green-400';
+    if (score >= 7.0) return 'text-yellow-600 dark:text-yellow-400';
+    return 'text-red-600 dark:text-red-400';
+  };
+
+  const filteredPrecedents = precedents
+    .filter(precedent => {
+      const matchesSearch = precedent.caseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          precedent.caseType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          precedent.court.toLowerCase().includes(searchTerm.toLowerCase());
       
       if (!matchesSearch) return false;
       
       switch (selectedFilter) {
-        case 'high-match':
-          return profile.matchScore >= 90;
-        case 'same-industry':
-          return profile.company.includes('Tech') || profile.company.includes('Lab');
-        case 'same-location':
-          return profile.location.includes('San Francisco') || profile.location.includes('CA');
+        case 'favorable':
+          return precedent.outcome === 'favorable';
+        case 'recent':
+          return precedent.year >= 2022;
+        case 'high-relevance':
+          return precedent.relevanceScore >= 8.0;
+        case 'federal':
+          return precedent.jurisdiction.includes('Federal');
         default:
           return true;
       }
     })
     .sort((a, b) => {
       switch (sortBy) {
-        case 'match':
-          return b.matchScore - a.matchScore;
-        case 'company':
-          return a.company.localeCompare(b.company);
-        case 'role':
-          return a.role.localeCompare(b.role);
-        case 'location':
-          return a.location.localeCompare(b.location);
+        case 'relevance':
+          return b.relevanceScore - a.relevanceScore;
+        case 'year':
+          return b.year - a.year;
+        case 'court':
+          return a.court.localeCompare(b.court);
+        case 'outcome':
+          return a.outcome.localeCompare(b.outcome);
+        case 'case-name':
+          return a.caseName.localeCompare(b.caseName);
         default:
           return 0;
       }
     });
 
-  // Remove in-progress logic, just use filteredProfiles as recommendedProfiles
-  const recommendedProfiles = filteredProfiles;
-
   return (
     <DashboardLayout>
       <div className="space-y-8">
         {/* Header */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Users className="h-6 w-6 text-purple-600" />
-            <h1 className="text-2xl font-medium text-foreground">Recommended Profiles</h1>
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-6 w-6 text-purple-600" />
+              <h1 className="text-2xl font-medium text-foreground">Precedent Research</h1>
+            </div>
+            <p><TypingAnimation text="Discover relevant legal precedents to strengthen your cases..." speed={70} /></p>
           </div>
-          <p><TypingAnimation text="Connect with the right people for your goals..." speed={70} /></p>
+          <button className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+            <Plus className="h-4 w-4" />
+            <span>New Research</span>
+          </button>
         </div>
 
         {/* Search and Filters */}
@@ -294,289 +266,152 @@ export default function NetworkPage() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder={CyclingPlaceholder({
-                options: [
-                  'Search by company...',
-                  'Search by role...',
-                  'Search by location...',
-                  'Search by university...',
-                  'Search by organization...'
-                ],
-                speed: 60,
-                pause: 1200
-              })}
+              placeholder="Search precedents by case name, court, or legal issue..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ border: '1px solid rgba(168, 85, 247, 0.3)' }}
-              className="w-full pl-10 pr-4 py-3 bg-card/50 backdrop-blur-sm rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
+              className="w-full pl-10 pr-4 py-3 bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
             />
           </div>
 
-          {/* Sort By Button Group */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-foreground">Sort by:</span>
-            {sortOptions.map(option => (
-              <button
-                key={option.id}
-                onClick={() => setSortBy(option.id)}
-                className={`px-3 py-1 text-xs rounded-full transition-all duration-200 ${
-                  sortBy === option.id
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
-                }`}
+          {/* Filters and Sort */}
+          <div className="flex flex-wrap gap-3">
+            {/* Filter Buttons */}
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium text-foreground">Filter:</span>
+              {filters.map(filter => (
+                <button
+                  key={filter.id}
+                  onClick={() => setSelectedFilter(filter.id)}
+                  className={`px-3 py-1 text-xs rounded-full transition-all duration-200 ${
+                    selectedFilter === filter.id
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Sort Dropdown */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-foreground">Sort by:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-3 py-1 text-xs bg-muted/50 border border-border/50 rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-200"
               >
-                {option.label}
-              </button>
-            ))}
+                {sortOptions.map(option => (
+                  <option key={option.id} value={option.id}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
         {/* Results Count */}
         <div className="text-sm text-muted-foreground">
-          Showing {recommendedProfiles.length} of {profiles.length} profiles
+          Showing {filteredPrecedents.length} of {precedents.length} precedents
         </div>
 
-        {/* In-depth Profile View Layout */}
-        {selectedProfile ? (
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Left: Other profiles, smaller, and action buttons below */}
-            <div className="flex-1 max-w-xs flex flex-col justify-between" style={{ minHeight: '540px' }}>
-              <div className="space-y-4">
-                {recommendedProfiles.filter(p => p.id !== selectedProfile.id).map(profile => (
-                  <div
-                    key={profile.id}
-                    style={{ border: '1px solid rgba(168, 85, 247, 0.15)' }}
-                    className="p-3 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-md hover:border-purple-300 transition-all duration-200 cursor-pointer opacity-80 hover:opacity-100"
-                    onClick={() => setSelectedProfile(profile)}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="min-w-0">
-                        <h4 className="text-base font-semibold text-foreground truncate">{profile.name}</h4>
-                        <p className="text-xs text-muted-foreground truncate">{profile.role}</p>
-                      </div>
-                      <span className="text-xs font-medium text-foreground">{profile.matchScore}%</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground line-clamp-2">{profile.bio}</p>
+        {/* Precedents Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredPrecedents.map((precedent) => (
+            <div
+              key={precedent.id}
+              className="p-6 rounded-lg border border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg hover:border-purple-300 transition-all duration-200"
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-semibold text-foreground truncate">{precedent.caseName}</h3>
+                  <p className="text-sm text-muted-foreground truncate">{precedent.court}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Calendar className="h-3 w-3 text-muted-foreground" />
+                    <span className="text-xs text-muted-foreground">{precedent.year}</span>
+                    <span className="text-xs text-muted-foreground">•</span>
+                    <span className="text-xs text-muted-foreground">{precedent.jurisdiction}</span>
                   </div>
-                ))}
+                </div>
+                <div className="flex flex-col items-end space-y-1">
+                  <span className={`px-2 py-1 text-xs rounded-full ${getOutcomeColor(precedent.outcome)}`}>
+                    {precedent.outcome}
+                  </span>
+                  <div className="flex items-center space-x-1">
+                    <Star className="h-3 w-3 text-yellow-500" />
+                    <span className={`text-xs font-medium ${getRelevanceColor(precedent.relevanceScore)}`}>
+                      {precedent.relevanceScore}/10
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="flex flex-col gap-3 mt-8 items-stretch">
-                {/* Move to In-Progress button removed */}
-                <button
-                  className="px-3 py-1.5 text-sm font-medium bg-purple-50 text-purple-700 border border-purple-200 rounded-md hover:bg-purple-100 hover:border-purple-400 transition-all shadow-sm"
-                  onClick={startEmailTyping}
-                >
-                  Generate Email
+
+              {/* Case Type */}
+              <div className="mb-3">
+                <span className="inline-block px-2 py-1 text-xs bg-muted/50 text-muted-foreground rounded-md">
+                  {precedent.caseType}
+                </span>
+              </div>
+
+              {/* Summary */}
+              <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{precedent.summary}</p>
+
+              {/* Key Points */}
+              <div className="mb-4">
+                <h4 className="text-xs font-medium text-foreground mb-2">Key Points:</h4>
+                <ul className="text-xs text-muted-foreground space-y-1">
+                  {precedent.keyPoints.slice(0, 2).map((point, index) => (
+                    <li key={index} className="line-clamp-1">• {point}</li>
+                  ))}
+                  {precedent.keyPoints.length > 2 && (
+                    <li className="text-muted-foreground">+{precedent.keyPoints.length - 2} more points...</li>
+                  )}
+                </ul>
+              </div>
+
+              {/* Citation */}
+              <div className="mb-4">
+                <p className="text-xs text-muted-foreground font-mono">
+                  {precedent.citation}
+                </p>
+              </div>
+
+              {/* Applicable Case */}
+              <div className="mb-4 p-2 bg-purple-50 dark:bg-purple-900/10 rounded-md">
+                <p className="text-xs text-purple-700 dark:text-purple-300">
+                  Applicable to: {precedent.applicableToCase}
+                </p>
+              </div>
+
+              {/* Footer */}
+              <div className="flex space-x-2 pt-4 border-t border-border/30">
+                <button className="flex-1 px-3 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center space-x-1">
+                  <Eye className="h-3 w-3" />
+                  <span>View Full Case</span>
                 </button>
-                <button className="text-sm text-muted-foreground underline hover:text-purple-600 underline-offset-2 transition-colors px-1 py-0.5 rounded text-left" onClick={() => setSelectedProfile(null)}>
-                  Back to all profiles
+                <button className="px-3 py-2 text-sm border border-border text-muted-foreground rounded-lg hover:bg-muted/50 transition-colors flex items-center justify-center">
+                  <Award className="h-3 w-3" />
+                </button>
+                <button className="px-3 py-2 text-sm border border-border text-muted-foreground rounded-lg hover:bg-muted/50 transition-colors flex items-center justify-center">
+                  <ExternalLink className="h-3 w-3" />
                 </button>
               </div>
             </div>
-            {/* Right: In-depth profile */}
-            <div className="flex-[2] p-8 rounded-lg bg-card/70 border border-purple-200 shadow-lg">
-              <div className="flex items-center gap-6 mb-6">
-                <img
-                  src={selectedProfile.avatar || '/profile1.png'}
-                  alt={selectedProfile.name}
-                  className="w-20 h-20 rounded-full object-cover border-2 border-purple-200 shadow"
-                />
-                <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-foreground mb-1">{selectedProfile.name}</h2>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg text-muted-foreground">{selectedProfile.role}</span>
-                  </div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Building className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">{selectedProfile.company}</span>
-                  </div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">{selectedProfile.location}</span>
-                  </div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <a href={(selectedProfile as any).linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">LinkedIn</a>
-                    <span className="text-sm text-muted-foreground">|</span>
-                    <a href={`mailto:${(selectedProfile as any).email}`} className="text-purple-700 hover:underline text-sm">{(selectedProfile as any).email}</a>
-                  </div>
-                </div>
-                <div className="ml-auto flex items-center gap-2 relative select-none" ref={heartRef}>
-                  <button
-                    className="flex items-center gap-1 group focus:outline-none"
-                    onClick={() => setShowScorePopover(v => !v)}
-                    aria-label="Explain Netch Score"
-                  >
-                    <Heart className="h-5 w-5 text-red-500 group-hover:scale-110 transition-transform" />
-                    <span className="text-base font-semibold text-foreground">{selectedProfile.matchScore}%</span>
-                  </button>
-                  {showScorePopover && (
-                    <div className="absolute right-0 mt-2 w-44 bg-white dark:bg-card border border-purple-100 rounded-lg shadow-lg p-3 z-20 animate-fade-in">
-                      <div className="text-xs font-semibold text-purple-700 mb-2">Why this score?</div>
-                      <ul className="list-disc pl-4 space-y-1 text-xs text-muted-foreground">
-                        <li>Industry match</li>
-                        <li>Location</li>
-                        <li>Role</li>
-                        <li>Shared interests</li>
-                        <li>Experience</li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </div>
-              {/* Placeholder Move to In-Progress Checkbox and Actions */}
-              <div className="flex flex-col gap-2 items-start mt-2 mb-6">
-                <label className="flex items-center gap-2 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={moveChecked}
-                    onChange={() => setShowMoveConfirm(true)}
-                    className="accent-purple-500 w-4 h-4 rounded border border-purple-200 focus:ring-0 focus:outline-none transition-all"
-                  />
-                  <span className="text-sm text-foreground font-medium">Move to In-Progress</span>
-                </label>
-                {/* Confirm popup */}
-                {showMoveConfirm && (
-                  <div className="mt-2 bg-white dark:bg-card border border-purple-100 rounded-lg shadow-lg p-4 z-20 animate-fade-in flex flex-col gap-3 min-w-[220px]">
-                    <span className="text-sm text-foreground">Are you sure you want to move this profile to In-Progress?</span>
-                    <div className="flex gap-2 justify-end">
-                      <button
-                        className="px-3 py-1 text-sm font-medium bg-muted/60 text-foreground rounded-md hover:bg-muted/80 transition-all"
-                        onClick={() => { setShowMoveConfirm(false); setMoveChecked(false); }}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        className="px-3 py-1 text-sm font-medium bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-all"
-                        onClick={() => { setShowMoveConfirm(false); setMoveChecked(true); }}
-                      >
-                        Confirm
-                      </button>
-                    </div>
-                  </div>
-                )}
-                <button
-                  className="px-3 py-1.5 text-sm font-medium bg-purple-50 text-purple-700 border border-purple-200 rounded-md hover:bg-purple-100 hover:border-purple-400 transition-all shadow-sm"
-                  onClick={startEmailTyping}
-                >
-                  Generate Email
-                </button>
-                <button className="text-sm text-muted-foreground underline hover:text-purple-600 underline-offset-2 transition-colors px-1 py-0.5 rounded text-left" onClick={() => setSelectedProfile(null)}>
-                  Back to all profiles
-                </button>
-              </div>
-              <div className="mb-4">
-                <h3 className="text-md font-semibold text-foreground mb-1">Bio</h3>
-                <p className="text-sm text-muted-foreground">{selectedProfile.bio}</p>
-              </div>
-              <div className="mb-4">
-                <h3 className="text-md font-semibold text-foreground mb-1">Skills</h3>
-                <div className="flex flex-wrap gap-2">
-                  {selectedProfile.skills.map((skill, idx) => (
-                    <span key={idx} className="px-3 py-1 text-xs bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-full">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Inline Generated Email Box */}
-              {showEmailModal && (
-                <div className="mt-8 bg-muted/40 dark:bg-card/60 p-4 rounded-xl border border-purple-100/40">
-                  <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-base font-semibold text-foreground">Generated Email</h3>
-                    <button className="text-xl text-muted-foreground hover:text-purple-500 px-2 transition-colors" onClick={closeEmailModal}>&times;</button>
-                  </div>
-                  <textarea
-                    className="w-full min-h-[120px] p-2 border border-purple-100/40 rounded-md text-sm text-foreground bg-transparent focus:outline-none focus:ring-1 focus:ring-purple-300 focus:border-purple-400 transition-all duration-200 placeholder:text-muted-foreground"
-                    value={emailDraft}
-                    onChange={e => setEmailDraft(e.target.value)}
-                    disabled={typing}
-                    placeholder="Your email will appear here..."
-                  />
-                  <div className="flex justify-end mt-3">
-                    {!typing && (
-                      <button className="px-4 py-1.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-sm font-medium shadow-sm" onClick={() => {/* send email logic */}}>
-                        Send Email
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )}
-              {/* Sent email section removed */}
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recommendedProfiles.map((profile) => (
-              <div
-                key={profile.id}
-                style={{ border: '1px solid rgba(168, 85, 247, 0.3)' }}
-                className="p-6 rounded-lg bg-card/50 backdrop-blur-sm hover:shadow-lg hover:border-purple-300 transition-all duration-200"
-              >
-                {/* Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-semibold text-foreground truncate">{profile.name}</h3>
-                    <p className="text-sm text-muted-foreground truncate">{profile.role}</p>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Building className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground">{profile.company}</span>
-                    </div>
-                    <div className="flex items-center gap-1 mt-1">
-                      <MapPin className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-xs text-muted-foreground">{profile.location}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 ml-2">
-                    <Heart className="h-3 w-3 text-red-500" />
-                    <span className="text-xs font-medium text-foreground">{profile.matchScore}%</span>
-                  </div>
-                </div>
-
-                {/* Bio */}
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{profile.bio}</p>
-
-                {/* Skills */}
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {profile.skills.slice(0, 3).map((skill, index) => (
-                    <span
-                      key={index}
-                      className="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 rounded-full"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                  {profile.skills.length > 3 && (
-                    <span className="px-2 py-1 text-xs text-muted-foreground">
-                      +{profile.skills.length - 3} more
-                    </span>
-                  )}
-                </div>
-
-                {/* Footer */}
-                <div className="flex items-center justify-between pt-4 border-t border-border/30">
-                  {/* Removed mutual connections display */}
-                  <button
-                    className="px-4 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                    onClick={() => setSelectedProfile(profile)}
-                  >
-                    Connect
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+          ))}
+        </div>
 
         {/* Empty State */}
-        {recommendedProfiles.length === 0 && (
+        {filteredPrecedents.length === 0 && (
           <div className="text-center py-12">
-            <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2">No profiles found</h3>
-            <p className="text-muted-foreground">Try adjusting your search or filters to find more matches.</p>
+            <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">No precedents found</h3>
+            <p className="text-muted-foreground">Try adjusting your search or filters to find relevant precedents.</p>
           </div>
         )}
       </div>
     </DashboardLayout>
   );
-} 
+}

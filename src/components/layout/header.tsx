@@ -36,7 +36,7 @@ export default function Header({ className = '' }: HeaderProps) {
                 alt="Logo"
                 className="w-6 h-6 rounded object-cover"
               />
-              <span className="text-base font-semibold text-foreground">Netch.ai</span>
+              <span className="text-base font-semibold text-foreground">CC LexiAI</span>
             </Link>
           </div>
 
